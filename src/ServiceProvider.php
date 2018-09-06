@@ -13,8 +13,12 @@ namespace TwigBridge;
 
 use Illuminate\View\ViewServiceProvider;
 use InvalidArgumentException;
-use Twig_Loader_Array;
-use Twig_Loader_Chain;
+use Twig\Environment;
+use Twig\Lexer;
+use Twig\Extension\DebugExtension;
+use Twig\Extension\ExtensionInterface;
+use Twig\Loader\ArrayLoader;
+use Twig\Loader\ChainLoader;
 use TwigBridge\Twig\Normalizers\DefaultNormalizer;
 use TwigBridge\Twig\Normalizers\Normalizer;
 
@@ -166,7 +170,7 @@ class ServiceProvider extends ViewServiceProvider
             $debug = array_get($this->app['twig.options'], 'debug', false);
 
             if ($debug) {
-                array_unshift($load, 'Twig_Extension_Debug');
+                array_unshift($load, DebugExtension::class);
             }
 
             return $load;
@@ -189,19 +193,23 @@ class ServiceProvider extends ViewServiceProvider
         });
 
         $this->app->bindIf('twig.loader.array', function ($app) {
-            return new Twig_Loader_Array($app['twig.templates']);
+            return new ArrayLoader($app['twig.templates']);
         });
 
         $this->app->bindIf('twig.loader.viewfinder', function () {
             return new Twig\Loader($this->app['files'], $this->app['view']->getFinder(), $this->app['twig.normalizer']);
         });
 
-        $this->app->bindIf('twig.loader', function () {
-            return new Twig_Loader_Chain([
-                $this->app['twig.loader.array'],
-                $this->app['twig.loader.viewfinder'],
-            ]);
-        }, true);
+        $this->app->bindIf(
+            'twig.loader',
+            function () {
+                return new ChainLoader([
+                    $this->app['twig.loader.array'],
+                    $this->app['twig.loader.viewfinder'],
+                ]);
+            },
+            true
+        );
     }
 
     /**
@@ -218,35 +226,37 @@ class ServiceProvider extends ViewServiceProvider
                 $this->app['twig.loader'], $this->app['twig.options'], $this->app['twig.normalizer'], $this->app
             );
 
-            // Instantiate and add extensions
-            foreach ($extensions as $extension) {
-                // Get an instance of the extension
-                // Support for string, closure and an object
-                if (is_string($extension)) {
-                    try {
-                        $extension = $this->app->make($extension);
-                    } catch (\Exception $e) {
-                        throw new InvalidArgumentException("Cannot instantiate Twig extension '$extension': " . $e->getMessage());
+                // Instantiate and add extensions
+                foreach ($extensions as $extension) {
+                    // Get an instance of the extension
+                    // Support for string, closure and an object
+                    if (is_string($extension)) {
+                        try {
+                            $extension = $this->app->make($extension);
+                        } catch (\Exception $e) {
+                            throw new InvalidArgumentException(
+                                "Cannot instantiate Twig extension '$extension': " . $e->getMessage()
+                            );
+                        }
+                    } elseif (is_callable($extension)) {
+                        $extension = $extension($this->app, $twig);
+                    } elseif (!is_a($extension, ExtensionInterface::class)) {
+                        throw new InvalidArgumentException('Incorrect extension type');
                     }
-                } elseif (is_callable($extension)) {
-                    $extension = $extension($this->app, $twig);
-                } elseif (!is_a($extension, 'Twig_Extension')) {
-                    throw new InvalidArgumentException('Incorrect extension type');
-                }
 
                 $twig->addExtension($extension);
             }
 
-            // Set lexer
-            if (is_a($lexer, 'Twig_LexerInterface')) {
-                $twig->setLexer($lexer);
-            }
+                // Set lexer
+                if (is_a($lexer, Lexer::class)) {
+                    $twig->setLexer($lexer);
+                }
 
             return $twig;
         }, true);
 
-        $this->app->alias('twig', 'Twig_Environment');
-        $this->app->alias('twig', 'TwigBridge\Bridge');
+        $this->app->alias('twig', Environment::class);
+        $this->app->alias('twig', Bridge::class);
 
         $this->app->bindIf('twig.compiler', function () {
             return new Engine\Compiler($this->app['twig']);

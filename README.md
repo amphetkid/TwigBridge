@@ -74,7 +74,7 @@ file to your local `config` folder and register the configuration and Service Pr
 `bootstrap/app.php`:
 
 ```php
-$app->configure('twigbridge'); 
+$app->configure('twigbridge');
 $app->register('TwigBridge\ServiceProvider');
 ```
 
@@ -148,20 +148,20 @@ follows:
 
 TwigBridge comes with the following extensions enabled by default:
 
-- [`Twig_Extension_Debug`](http://twig.sensiolabs.org/doc/extensions/debug.html)
-- `TwigBridge\Extension\Laravel\Auth`
-- `TwigBridge\Extension\Laravel\Config`
-- `TwigBridge\Extension\Laravel\Dump`
-- `TwigBridge\Extension\Laravel\Form`
-- `TwigBridge\Extension\Laravel\Html`
-- `TwigBridge\Extension\Laravel\Input`
-- `TwigBridge\Extension\Laravel\Session`
-- `TwigBridge\Extension\Laravel\String`
-- `TwigBridge\Extension\Laravel\Translator`
-- `TwigBridge\Extension\Laravel\Url`
-- `TwigBridge\Extension\Loader\Facades`
-- `TwigBridge\Extension\Loader\Filters`
-- `TwigBridge\Extension\Loader\Functions`
+- [Twig\Extension\DebugExtension](http://twig.sensiolabs.org/doc/extensions/debug.html)
+- TwigBridge\Extension\Laravel\Auth
+- TwigBridge\Extension\Laravel\Config
+- TwigBridge\Extension\Laravel\Dump
+- TwigBridge\Extension\Laravel\Form
+- TwigBridge\Extension\Laravel\Html
+- TwigBridge\Extension\Laravel\Input
+- TwigBridge\Extension\Laravel\Session
+- TwigBridge\Extension\Laravel\String
+- TwigBridge\Extension\Laravel\Translator
+- TwigBridge\Extension\Laravel\Url
+- TwigBridge\Extension\Loader\Facades
+- TwigBridge\Extension\Loader\Filters
+- TwigBridge\Extension\Loader\Functions
 
 To enable `0.5.*` style Facades, enable the Legacy Facades extension:
 - `TwigBridge\Extension\Laravel\Legacy\Facades`
