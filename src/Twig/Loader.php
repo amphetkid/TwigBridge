@@ -11,11 +11,12 @@
 
 namespace TwigBridge\Twig;
 
-use Twig_LoaderInterface;
-use Twig_Error_Loader;
-use InvalidArgumentException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\ViewFinderInterface;
+use InvalidArgumentException;
+use Twig_Error_Loader;
+use Twig_LoaderInterface;
+use TwigBridge\Twig\Normalizers\Normalizer;
 
 /**
  * Basic loader using absolute paths.
@@ -33,9 +34,9 @@ class Loader implements Twig_LoaderInterface
     protected $finder;
 
     /**
-     * @var string Twig file extension.
+     * @var \TwigBridge\Twig\Normalizers\Normalizer
      */
-    protected $extension;
+    protected $normalizer;
 
     /**
      * @var array Template lookup cache.
@@ -43,15 +44,15 @@ class Loader implements Twig_LoaderInterface
     protected $cache = [];
 
     /**
-     * @param \Illuminate\Filesystem\Filesystem     $files     The filesystem
-     * @param \Illuminate\View\ViewFinderInterface  $finder
-     * @param string                                $extension Twig file extension.
+     * @param \Illuminate\Filesystem\Filesystem       $files The filesystem
+     * @param \Illuminate\View\ViewFinderInterface    $finder
+     * @param \TwigBridge\Twig\Normalizers\Normalizer $normalizer
      */
-    public function __construct(Filesystem $files, ViewFinderInterface $finder, $extension = 'twig')
+    public function __construct(Filesystem $files, ViewFinderInterface $finder, Normalizer $normalizer)
     {
-        $this->files     = $files;
-        $this->finder    = $finder;
-        $this->extension = $extension;
+        $this->files = $files;
+        $this->finder = $finder;
+        $this->normalizer = $normalizer;
     }
 
     /**
@@ -68,7 +69,7 @@ class Loader implements Twig_LoaderInterface
             return $name;
         }
 
-        $name = $this->normalizeName($name);
+        $name = $this->normalizer->normalize($name);
 
         if (isset($this->cache[$name])) {
             return $this->cache[$name];
@@ -81,21 +82,6 @@ class Loader implements Twig_LoaderInterface
         }
 
         return $this->cache[$name];
-    }
-
-    /**
-     * Normalize the Twig template name to a name the ViewFinder can use
-     *
-     * @param  string $name Template file name.
-     * @return string The parsed name
-     */
-    protected function normalizeName($name)
-    {
-        if ($this->files->extension($name) === $this->extension) {
-            $name = substr($name, 0, - (strlen($this->extension) + 1));
-        }
-
-        return $name;
     }
 
     /**
