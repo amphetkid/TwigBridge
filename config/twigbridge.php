@@ -83,6 +83,32 @@ return [
         |
         */
         'globals' => [],
+        
+        /*
+        |--------------------------------------------------------------------------
+        | FileViewFinder
+        |--------------------------------------------------------------------------
+        |
+        | Define your custom file view finder. Laravels finder extended with
+        | a) Twig namespace support (inside twig with include('@...'))
+        | b) Allow calling views with file extension inside Laravel (view('file_xy.twig')), this
+        |    is helpful if you use autocompletion with Laravel/Symfony Plugin in PhpStorm
+        |
+        */
+        'fileViewFinder' => 'TwigBridge\FileViewFinder',
+        
+        /*
+        |--------------------------------------------------------------------------
+        | Namespaces
+        |--------------------------------------------------------------------------
+        |
+        | Inside your twig files you can use namespaces like
+        | {% include '@filter/advanced/somethingConcrete.twig' %}
+        | Due Symfony Plugin (in PhpStorm) you have autocompletion, if you configurate it correctly
+        | example:  ['@filter' => base_path() . '/resources/views/folder_a/folder_b/filter', ...]
+        |
+        */
+        'namespaces' => []
     ],
 
     'extensions' => [

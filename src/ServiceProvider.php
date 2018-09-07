@@ -14,9 +14,9 @@ namespace TwigBridge;
 use Illuminate\View\ViewServiceProvider;
 use InvalidArgumentException;
 use Twig\Environment;
-use Twig\Lexer;
 use Twig\Extension\DebugExtension;
 use Twig\Extension\ExtensionInterface;
+use Twig\Lexer;
 use Twig\Loader\ArrayLoader;
 use Twig\Loader\ChainLoader;
 use TwigBridge\Twig\Normalizers\DefaultNormalizer;
@@ -54,6 +54,7 @@ class ServiceProvider extends ViewServiceProvider
     {
         $this->loadConfiguration();
         $this->registerFileExtensions();
+        $this->registerNamespaces();
     }
 
     /**
@@ -113,6 +114,22 @@ class ServiceProvider extends ViewServiceProvider
     }
 
     /**
+     * Register the Twig namespaces in the Laravel View component.
+     *
+     * @return void
+     */
+    protected function registerNamespaces()
+    {
+        /** @var \Illuminate\View\Factory $view */
+        $view = $this->app['view'];
+
+        $namespaces = $this->app['config']->get('twigbridge.twig.namespaces', []);
+        foreach ($namespaces as $key => $path) {
+            $view->addNamespace($key, $path);
+        }
+    }
+
+    /**
      * Register console command bindings.
      *
      * @return void
@@ -158,7 +175,7 @@ class ServiceProvider extends ViewServiceProvider
             $options = $config->get('twigbridge.twig.environment', []);
 
             if (!isset($options['cache']) || $options['cache'] === null) {
-                $options['cache'] = storage_path('framework'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'twig');
+                $options['cache'] = storage_path('framework' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'twig');
             }
 
             return $options;
@@ -226,31 +243,31 @@ class ServiceProvider extends ViewServiceProvider
                 $this->app['twig.loader'], $this->app['twig.options'], $this->app['twig.normalizer'], $this->app
             );
 
-                // Instantiate and add extensions
-                foreach ($extensions as $extension) {
-                    // Get an instance of the extension
-                    // Support for string, closure and an object
-                    if (is_string($extension)) {
-                        try {
-                            $extension = $this->app->make($extension);
-                        } catch (\Exception $e) {
-                            throw new InvalidArgumentException(
-                                "Cannot instantiate Twig extension '$extension': " . $e->getMessage()
-                            );
-                        }
-                    } elseif (is_callable($extension)) {
-                        $extension = $extension($this->app, $twig);
-                    } elseif (!is_a($extension, ExtensionInterface::class)) {
-                        throw new InvalidArgumentException('Incorrect extension type');
+            // Instantiate and add extensions
+            foreach ($extensions as $extension) {
+                // Get an instance of the extension
+                // Support for string, closure and an object
+                if (is_string($extension)) {
+                    try {
+                        $extension = $this->app->make($extension);
+                    } catch (\Exception $e) {
+                        throw new InvalidArgumentException(
+                            "Cannot instantiate Twig extension '$extension': " . $e->getMessage()
+                        );
                     }
+                } elseif (is_callable($extension)) {
+                    $extension = $extension($this->app, $twig);
+                } elseif (!is_a($extension, ExtensionInterface::class)) {
+                    throw new InvalidArgumentException('Incorrect extension type');
+                }
 
                 $twig->addExtension($extension);
             }
 
-                // Set lexer
-                if (is_a($lexer, Lexer::class)) {
-                    $twig->setLexer($lexer);
-                }
+            // Set lexer
+            if (is_a($lexer, Lexer::class)) {
+                $twig->setLexer($lexer);
+            }
 
             return $twig;
         }, true);
@@ -260,6 +277,13 @@ class ServiceProvider extends ViewServiceProvider
 
         $this->app->bindIf('twig.compiler', function () {
             return new Engine\Compiler($this->app['twig']);
+        });
+
+        // Here we override default laravel view finder
+        $this->app->bind('view.finder', function ($app) {
+            $fileViewFinder = $this->app['config']->get('twigbridge.twig.fileViewFinder', 'Twigbridge\FileViewFinder');
+
+            return new $fileViewFinder($app['files'], $app['config']['view.paths']);
         });
 
         $this->app->bindIf('twig.engine', function () {
