@@ -26,6 +26,7 @@ class FacadesTest extends Base
         $twig->shouldReceive('registerUndefinedFunctionCallback')->with(m::on(function ($callback) {
             return !call_user_func($callback, 'fooBar');
         }));
+        $this->assertEquals(1, $twig->mockery_getExpectationCount());
 
         $this->getFacade($twig);
     }

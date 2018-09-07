@@ -64,6 +64,7 @@ class UrlTest extends Base
         $generator = m::mock('Illuminate\Routing\UrlGenerator');
         $generator->shouldReceive('to')->once();
         $generator->shouldReceive('fooBar')->once();
+        $this->assertEquals(2, $generator->mockery_getExpectationCount());
 
         $dispatcher = m::mock('Illuminate\Contracts\Events\Dispatcher');
         $url = new Url($generator, m::mock('Illuminate\Routing\Router', [ $dispatcher ])->makePartial());

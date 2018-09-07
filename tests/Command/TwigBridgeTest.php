@@ -32,6 +32,7 @@ class TwigBridgeTest extends Base
         $output->shouldReceive('writeln')->with(
             '<info>Twig Bridge</info> version <comment>'.Bridge::BRIDGE_VERSION.'</comment>'
         );
+        $this->assertEquals(2, $output->mockery_getExpectationCount());
 
         $command->run(
             new ArrayInput([]),

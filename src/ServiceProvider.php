@@ -53,7 +53,7 @@ class ServiceProvider extends ViewServiceProvider
     public function boot()
     {
         $this->loadConfiguration();
-        $this->registerExtensions();
+        $this->registerFileExtensions();
     }
 
     /**
@@ -93,11 +93,11 @@ class ServiceProvider extends ViewServiceProvider
     }
 
     /**
-     * Register the Twig extension in the Laravel View component.
+     * Register the Twig file extension in the Laravel View component.
      *
      * @return void
      */
-    protected function registerExtensions()
+    protected function registerFileExtensions()
     {
         /** @var \Illuminate\View\Factory $view */
         $view = $this->app['view'];
@@ -158,7 +158,7 @@ class ServiceProvider extends ViewServiceProvider
             $options = $config->get('twigbridge.twig.environment', []);
 
             if (!isset($options['cache']) || $options['cache'] === null) {
-                $options['cache'] = storage_path('framework/views/twig');
+                $options['cache'] = storage_path('framework'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'twig');
             }
 
             return $options;
@@ -290,7 +290,7 @@ class ServiceProvider extends ViewServiceProvider
             'command.twig',
             'command.twig.clean',
             'command.twig.lint',
-            'twig.extension',
+            'twig.file_extensions',
             'twig.options',
             'twig.extensions',
             'twig.lexer',

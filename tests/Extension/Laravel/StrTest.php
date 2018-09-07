@@ -75,6 +75,7 @@ class StrTest extends Base
     {
         $mock = m::mock('Illuminate\Support\Str');
         $mock->shouldReceive('fooBar')->once();
+        $this->assertEquals(1, $mock->mockery_getExpectationCount());
 
         $string  = $this->getString();
         $string->setCallback($mock);

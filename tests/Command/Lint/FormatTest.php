@@ -28,10 +28,12 @@ class FormatTest extends Base
         $finder->shouldReceive('in')->andReturn($finder);
         $finder->shouldReceive('name')->andReturn([]);
         $command->setFinder($finder);
+        $this->assertEquals(3, $finder->mockery_getExpectationCount());
 
         $input  = new ArrayInput([]);
         $output = m::mock('Symfony\Component\Console\Output\NullOutput')->makePartial();
         $output->shouldReceive('writeln')->with('<comment>0/0 valid files</comment>');
+        $this->assertEquals(1, $output->mockery_getExpectationCount());
 
         $command->run($input, $output);
     }
@@ -47,6 +49,7 @@ class FormatTest extends Base
         $finder->shouldReceive('files')->andReturn($finder);
         $finder->shouldReceive('in')->andReturn($finder);
         $finder->shouldReceive('name')->andReturn([]);
+        $this->assertEquals(3, $finder->mockery_getExpectationCount());
         $command->setFinder($finder);
 
         $input  = new ArrayInput([
@@ -54,6 +57,7 @@ class FormatTest extends Base
         ]);
         $output = m::mock('Symfony\Component\Console\Output\NullOutput')->makePartial();
         $output->shouldReceive('writeln')->with("[]");
+        $this->assertEquals(1, $output->mockery_getExpectationCount());
 
         $command->run($input, $output);
     }
@@ -72,6 +76,7 @@ class FormatTest extends Base
         $finder->shouldReceive('files')->andReturn($finder);
         $finder->shouldReceive('in')->andReturn($finder);
         $finder->shouldReceive('name')->andReturn([]);
+        $this->assertEquals(3, $finder->mockery_getExpectationCount());
         $command->setFinder($finder);
 
         $input  = new ArrayInput([

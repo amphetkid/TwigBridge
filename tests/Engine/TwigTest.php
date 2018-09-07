@@ -46,14 +46,18 @@ class TwigTest extends Base
 
         $template = m::mock('TwigBridge\Twig\Template');
         $template->shouldReceive('render')->once()->with($data);
+        $this->assertEquals(1, $template->mockery_getExpectationCount());
 
         $compiler = m::mock('TwigBridge\Engine\Compiler');
         $compiler->shouldReceive('load')->once()->with($path)->andReturn($template);
+        $this->assertEquals(1, $compiler->mockery_getExpectationCount());
 
         $viewfinder = m::mock('TwigBridge\Twig\Loader');
 
         $engine = new Engine($compiler, $viewfinder);
         $engine->get($path, $data);
+        
+        
     }
 
     public function testGetWithGlobalData()
@@ -64,9 +68,11 @@ class TwigTest extends Base
 
         $template = m::mock('TwigBridge\Twig\Template');
         $template->shouldReceive('render')->once()->with(array_merge($globalData, $data));
+        $this->assertEquals(1, $template->mockery_getExpectationCount());
 
         $compiler = m::mock('TwigBridge\Engine\Compiler');
         $compiler->shouldReceive('load')->once()->with($path)->andReturn($template);
+        $this->assertEquals(1, $compiler->mockery_getExpectationCount());
 
         $viewfinder = m::mock('TwigBridge\Twig\Loader');
 

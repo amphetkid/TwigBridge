@@ -5,6 +5,7 @@ namespace TwigBridge\Tests\Bridge;
 use TwigBridge\Tests\Base;
 use Mockery as m;
 use TwigBridge\Bridge;
+use TwigBridge\Twig\Normalizers\DefaultNormalizer;
 
 class LintTest extends Base
 {
@@ -14,12 +15,13 @@ class LintTest extends Base
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      */
     public function testUnknownFile()
     {
         $finder = m::mock('TwigBridge\Twig\Loader');
-        $bridge = new Bridge($finder);
+        $normalizer = m::mock(DefaultNormalizer::class);
+        $bridge = new Bridge($finder, [], $normalizer);
         $app    = $this->getApplication();
 
         $finder->shouldReceive('getSourceContext')->andReturn(false);
@@ -32,7 +34,8 @@ class LintTest extends Base
     public function testInvalidFile()
     {
         $finder = m::mock('TwigBridge\Twig\Loader');
-        $bridge = new Bridge($finder);
+        $normalizer = m::mock(DefaultNormalizer::class);
+        $bridge = new Bridge($finder, [], $normalizer);
         $app    = $this->getApplication();
 
         $finder->shouldReceive('getSourceContext')->andReturn(new \Twig\Source('{{ name }', 'test.twig'));
@@ -45,7 +48,8 @@ class LintTest extends Base
     public function testValidFile()
     {
         $finder = m::mock('TwigBridge\Twig\Loader');
-        $bridge = new Bridge($finder);
+        $normalizer = m::mock(DefaultNormalizer::class);
+        $bridge = new Bridge($finder, [], $normalizer);
         $app    = $this->getApplication();
 
         $finder->shouldReceive('getSourceContext')->andReturn(new \Twig\Source('{{ name }}', 'test.twig'));

@@ -11,18 +11,18 @@
 
 namespace TwigBridge\Extension\Laravel;
 
-use Illuminate\Support\Debug\HtmlDumper;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Twig\Environment;
+use Twig\Extension\AbstractExtension;
 use Twig\Template;
 use Twig\TwigFunction;
-use Twig\Extension\AbstractExtension;
 
 /**
  * Dump a variable or the view context
  *
  * Based on the Symfony Twig Bridge Dump Extension
- * @see https://github.com/symfony/symfony/blob/2.6/src/Symfony/Bridge/Twig/Extension/DumpExtension.php
+ *
+ * @see    https://github.com/symfony/symfony/blob/2.6/src/Symfony/Bridge/Twig/Extension/DumpExtension.php
  * @author Nicolas Grekas <p@tchwork.com>
  */
 class Dump extends AbstractExtension
@@ -35,7 +35,7 @@ class Dump extends AbstractExtension
     public function getFunctions()
     {
         return array(
-          new TwigFunction('dump', array($this, 'dump'), array('is_safe' => array('html'), 'needs_context' => true, 'needs_environment' => true)),
+            new TwigFunction('dump', array($this, 'dump'), array('is_safe' => array('html'), 'needs_context' => true, 'needs_environment' => true)),
         );
     }
 
@@ -62,11 +62,16 @@ class Dump extends AbstractExtension
             unset($vars[0], $vars[1]);
         }
         $dump = fopen('php://memory', 'r+b');
-        $dumper = new HtmlDumper($dump);
+        if (version_compare(app()::VERSION, '5.7') < 0) {
+            $dumper = new \Illuminate\Support\Debug\HtmlDumper($dump);
+        } else {
+            $dumper = new \Symfony\Component\VarDumper\Dumper\HtmlDumper($dump);
+        }
         foreach ($vars as $value) {
             $dumper->dump($this->cloner->cloneVar($value));
         }
         rewind($dump);
+
         return stream_get_contents($dump);
     }
 }

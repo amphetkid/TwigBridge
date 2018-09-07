@@ -45,6 +45,7 @@ class HtmlTest extends Base
     {
         $builder = m::mock('Collective\Html\HtmlBuilder');
         $builder->shouldReceive('fooBar')->once();
+        $this->assertEquals(1, $builder->mockery_getExpectationCount());
 
         $html      = new Html($builder);
         $functions = $html->getFunctions();

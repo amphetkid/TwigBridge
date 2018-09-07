@@ -2,8 +2,12 @@
 
 namespace TwigBridge\Tests\Command\Lint;
 
+use Illuminate\Support\Facades\Artisan;
 use Mockery as m;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\StreamOutput;
 use TwigBridge\Command\Lint;
 
@@ -31,10 +35,14 @@ class ContentTest extends Base
         $command->setLaravel($app);
 
         $input  = new ArrayInput([
-            'filename' => 'foo.txt',
+            'filename' => 'foo.txt'
         ]);
+        
+        // $input->setInteractive(false);
+        // $input->('no-interaction', true);
         $output = m::mock('Symfony\Component\Console\Output\NullOutput')->makePartial();
 
+        // $command->addOption('no-interaction');
         $command->run($input, $output);
     }
 }

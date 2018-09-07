@@ -27,7 +27,8 @@ class TwigTest extends Base
 
         // Make sure that twig.options sets the storage path automatically
         $this->assertEmpty($config['cache']);
-        $this->assertEquals($options['cache'], realpath(__DIR__.'/../..').'/storage/framework/views/twig');
+        $d = DIRECTORY_SEPARATOR; // Windows \ ; Linux /
+        $this->assertEquals(realpath(__DIR__.$d.'..'.$d.'..').$d.'storage'.$d.'framework'.$d.'views'.$d.'twig', $options['cache']);
 
         // Make sure same config is returned
         $options['cache'] = null;
@@ -42,17 +43,17 @@ class TwigTest extends Base
         $provider->register();
         $provider->boot();
 
-        $this->assertEquals('twig', $app['twig.extension']);
+        $this->assertEquals(['twig'], $app['twig.file_extensions']);
 
         // Change extension
         $app = $this->getApplication([
-            'twig' => ['extension' => 'twig.html'],
+            'twig' => ['file_extensions' => ['twig','html.twig']],
         ]);
         $provider = new ServiceProvider($app);
         $provider->register();
         $provider->boot();
 
-        $this->assertEquals('twig.html', $app['twig.extension']);
+        $this->assertEquals(['twig','html.twig'], $app['twig.file_extensions']);
     }
 
     public function testExtensions()

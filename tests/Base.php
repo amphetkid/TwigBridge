@@ -2,14 +2,14 @@
 
 namespace TwigBridge\Tests;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Mockery as m;
 use Illuminate\Foundation\Application;
 use Illuminate\View\Factory;
 use Illuminate\Config\Repository;
 use Illuminate\View\Engines\EngineResolver;
 
-abstract class Base extends PHPUnit_Framework_TestCase
+abstract class Base extends TestCase
 {
     protected $twigBridgeRoot;
 
@@ -31,8 +31,8 @@ abstract class Base extends PHPUnit_Framework_TestCase
         $app->instance('path', __DIR__);
 
         $app['env']          = 'production';
-        $app['path.config']  = __DIR__.'/config';
-        $app['path.storage'] = __DIR__.'/storage';
+        $app['path.config']  = __DIR__.DIRECTORY_SEPARATOR.'config';
+        $app['path.storage'] = __DIR__.DIRECTORY_SEPARATOR.'storage';
 
         // Filesystem
         $files = m::mock('Illuminate\Filesystem\Filesystem');
@@ -54,7 +54,7 @@ abstract class Base extends PHPUnit_Framework_TestCase
         	'twigbridge' => array(
                 'extensions' => $config['extensions'],
                 'twig' => array(
-                    'extension' => 'twig',
+                    'file_extensions' => ['twig'],
                     'environment' => array(
                         'debug'               => false,
                         'charset'             => 'utf-8',
