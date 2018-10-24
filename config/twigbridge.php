@@ -48,7 +48,7 @@ return [
             // default: TwigBridge\Twig\Template
             'base_template_class' => 'TwigBridge\Twig\Template',
 
-            // An absolute path where to store the compiled templates, or false to disable caching. If null
+            // An absolute path where to store the compiled templates, or false to disable caching. If null or true
             // then the cache file path is used.
             // default: cache file storage path
             'cache' => null,

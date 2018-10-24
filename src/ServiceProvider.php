@@ -174,7 +174,7 @@ class ServiceProvider extends ViewServiceProvider
         $this->app->bindIf('twig.options', function () use ($config) {
             $options = $config->get('twigbridge.twig.environment', []);
 
-            if (!isset($options['cache']) || $options['cache'] === null) {
+            if (!isset($options['cache']) || $options['cache'] === null || $options['cache'] === true) {
                 $options['cache'] = storage_path('framework' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'twig');
             }
 
