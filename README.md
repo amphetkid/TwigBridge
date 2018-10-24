@@ -1,8 +1,10 @@
+## This is a fork to provide finally twig 2.x, custom functionality and better maintaining. Use at your own risk.
+
 Seamlessly implement [Twig](https://twig.symfony.com/) in [Laravel 5](https://laravel.com/).
 
-[![Latest Stable Version](https://poser.pugx.org/rcrowe/twigbridge/v/stable.png)](https://packagist.org/packages/rcrowe/twigbridge)
-[![Total Downloads](https://poser.pugx.org/rcrowe/twigbridge/downloads.png)](https://packagist.org/packages/rcrowe/twigbridge)
-[![License](https://poser.pugx.org/rcrowe/twigbridge/license.png)](https://packagist.org/packages/rcrowe/twigbridge)
+[![Latest Stable Version](https://poser.pugx.org/opm87/twigbridge/v/stable)](https://packagist.org/packages/opm87/twigbridge)
+[![Total Downloads](https://poser.pugx.org/opm87/twigbridge/downloads)](https://packagist.org/packages/opm87/twigbridge)
+[![License](https://poser.pugx.org/opm87/twigbridge/license)](https://packagist.org/packages/opm87/twigbridge)
 
 # Requirements
 

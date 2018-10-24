@@ -1,3 +1,13 @@
+## 1.0.0
+
+First release since fork
+
+- Custom (optional) FileViewFinder to allow autocompletion with symfony plugin (PHPStorm)
+- Fixed tests
+- Support Laravel 5.7
+- Twig 2.x support
+- Allow enable default cache with true option
+
 ## 0.8
 
 Changes since 0.7
