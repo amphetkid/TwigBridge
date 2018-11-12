@@ -281,7 +281,7 @@ class ServiceProvider extends ViewServiceProvider
 
         // Here we override default laravel view finder
         $this->app->bind('view.finder', function ($app) {
-            $fileViewFinder = $this->app['config']->get('twigbridge.twig.fileViewFinder', 'Twigbridge\FileViewFinder');
+            $fileViewFinder = $this->app['config']->get('twigbridge.twig.fileViewFinder', 'TwigBridge\FileViewFinder');
 
             return new $fileViewFinder($app['files'], $app['config']['view.paths']);
         });
